@@ -68,3 +68,4 @@ $m->marshal(new Money(12.99, $currency));   // ["amount" => 12.99, "currency" =>
 See also:
 
 * https://stackoverflow.com/questions/1443158/binary-data-in-json-string-something-better-than-base64
+* https://stackoverflow.com/questions/30249406/what-is-the-standard-for-formatting-currency-values-in-json
