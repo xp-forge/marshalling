@@ -23,7 +23,7 @@ $m->marshal([1, 2, 3]);         // [1, 2, 3]
 $m->marshal(['admin' => true]); // ["admin" => true]
 ```
 
-Value objects are marshalled using field => getter lookups; supporting both *method named for field* and *get[Field]* conventions.
+Value objects are marshalled using field => getter lookups; supporting both *method named for field* and *get[Field]()* conventions.
 
 ```php
 use util\data\Marshalling;
@@ -44,7 +44,7 @@ $m= new Marshalling();
 $m->marshal(new Person('...', 42)); // ["name" => "...", "age" => 42]
 ```
 
-When unmarshalling from maps, pass the type as second parameter:
+When unmarshalling from maps, pass the type as second parameter. Objects are created without invoking the constructor, and by either setting the fields directly or by using the *set[Field]()* convention.
 
 ```php
 use util\data\Marshalling;
