@@ -45,9 +45,10 @@ class Marshalling {
    * @param  ?lang.Type|string $type
    * @return var
    */
-  public function unmarshal($value, $type) {
-    $t= $type instanceof Type ? $type : Type::forName($type);
+  public function unmarshal($value, $type= null) {
+    if (null === $type) return $value;
 
+    $t= $type instanceof Type ? $type : Type::forName($type);
     if ($t instanceof XPClass) {
       if ($t->isInterface()) {
         return $t->cast($value);
@@ -100,8 +101,6 @@ class Marshalling {
       return $r;
     } else if ($t === Type::$ITERABLE) {
       return $this->iterable($value, Type::$VAR);
-    } else if (null === $t) {
-      return $value;
     } else {
       return $t->cast($value);
     }

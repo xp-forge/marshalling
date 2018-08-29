@@ -1,6 +1,5 @@
 <?php namespace util\data\unittest;
 
-use lang\Type;
 use unittest\TestCase;
 use util\Date;
 use util\data\Marshalling;
@@ -24,7 +23,7 @@ class DatesTest extends TestCase {
   public function unmarshal_date_accepts($format) {
     $this->assertEquals(
       new Date('2018-02-07 09:47:00+0100'),
-      (new Marshalling())->unmarshal($format, Type::forName(Date::class))
+      (new Marshalling())->unmarshal($format, Date::class)
     );
   }
 }

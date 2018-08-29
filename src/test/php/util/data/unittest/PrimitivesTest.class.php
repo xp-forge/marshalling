@@ -1,6 +1,5 @@
 <?php namespace util\data\unittest;
 
-use lang\Type;
 use unittest\TestCase;
 use util\data\Marshalling;
 
@@ -26,6 +25,6 @@ class PrimitivesTest extends TestCase {
 
   #[@test, @values('fixtures')]
   public function unmarshal($value) {
-    $this->assertEquals($value, (new Marshalling())->unmarshal($value, Type::$VAR));
+    $this->assertEquals($value, (new Marshalling())->unmarshal($value));
   }
 }
