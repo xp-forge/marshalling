@@ -2,6 +2,7 @@
 
 use lang\Type;
 use unittest\TestCase;
+use util\Bytes;
 use util\Currency;
 use util\Date;
 use util\Money;
@@ -31,6 +32,14 @@ class MarshallingTest extends TestCase {
     $this->assertEquals(
       '2018-02-07T09:47:00+0100',
       (new Marshalling())->marshal(new Date('2018-02-07 09:47:00+0100'))
+    );
+  }
+
+  #[@test]
+  public function marshal_bytes_uses_base64() {
+    $this->assertEquals(
+      'UEsDBA==',
+      (new Marshalling())->marshal(new Bytes("\x50\x4b\x03\x04"))
     );
   }
 
@@ -133,6 +142,14 @@ class MarshallingTest extends TestCase {
     $this->assertEquals(
       new Money(3.50, Currency::$EUR),
       (new Marshalling())->unmarshal(['amount' => '3.5', 'currency' => 'EUR'], Type::forName(Money::class))
+    );
+  }
+
+  #[@test]
+  public function unmarshal_bytes_from_base64() {
+    $this->assertEquals(
+      new Bytes("\x50\x4b\x03\x04"),
+      (new Marshalling())->unmarshal('UEsDBA==', Type::forName(Bytes::class))
     );
   }
 

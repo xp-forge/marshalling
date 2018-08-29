@@ -5,6 +5,7 @@ use lang\Enum;
 use lang\MapType;
 use lang\Type;
 use lang\XPClass;
+use util\Bytes;
 use util\Currency;
 use util\Date;
 use util\Money;
@@ -48,6 +49,8 @@ class Marshalling {
         return $value;
       } else if ($type->isAssignableFrom(Date::class)) {
         return new Date($value);
+      } else if ($type->isAssignableFrom(Bytes::class)) {
+        return new Bytes(base64_decode($value));
       } else if ($type->isAssignableFrom(Money::class)) {
         return new Money($value['amount'], Currency::getInstance($value['currency']));
       } else if ($type->hasConstructor() && 1 === $type->getConstructor()->numParameters()) {
@@ -117,6 +120,8 @@ class Marshalling {
   public function marshal($value) {
     if ($value instanceof Date) {
       return $value->toString(DATE_ISO8601);
+    } else if ($value instanceof Bytes) {
+      return base64_encode($value);
     } else if ($value instanceof Money) {
       return ['amount' => $value->amount(), 'currency' => $value->currency()->toString()];
     } else if ($value instanceof Enum) {
