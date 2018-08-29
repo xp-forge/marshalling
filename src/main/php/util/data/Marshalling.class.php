@@ -132,7 +132,7 @@ class Marshalling {
     } else if ($value instanceof Bytes) {
       return base64_encode($value);
     } else if ($value instanceof Money) {
-      return ['amount' => $value->amount(), 'currency' => $value->currency()->toString()];
+      return ['amount' => $value->amount(), 'currency' => $value->currency()->name()];
     } else if ($value instanceof Enum) {
       return $value->name();
     } else if ($value instanceof \Traversable) {
