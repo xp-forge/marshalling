@@ -20,4 +20,9 @@ class MarshallingTest extends TestCase {
   public function unmarshal($type) {
     $this->assertEquals(1, (new Marshalling())->unmarshal(1, $type));
   }
+
+  #[@test]
+  public function unmarshal_without_type() {
+    $this->assertEquals(1, (new Marshalling())->unmarshal(1));
+  }
 }
