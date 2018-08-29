@@ -11,8 +11,8 @@ class EnumsTest extends TestCase {
     $this->assertEquals('EUR', (new Marshalling())->marshal(Currency::$EUR));
   }
 
-  #[@test]
-  public function unmarshal_enum() {
-    $this->assertEquals(Currency::$EUR, (new Marshalling())->unmarshal('EUR', Currency::class));
+  #[@test, @values(['EUR', Currency::$EUR])]
+  public function unmarshal_enum($value) {
+    $this->assertEquals(Currency::$EUR, (new Marshalling())->unmarshal($value, Currency::class));
   }
 }

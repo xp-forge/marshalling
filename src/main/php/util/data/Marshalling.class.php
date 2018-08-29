@@ -52,10 +52,10 @@ class Marshalling {
     if ($t instanceof XPClass) {
       if ($t->isInterface()) {
         return $t->cast($value);
-      } else if ($t->isEnum()) {
-        return Enum::valueOf($t, $value);
       } else if ($t->isInstance($value)) {
         return $value;
+      } else if ($t->isEnum()) {
+        return Enum::valueOf($t, $value);
       } else if ($t->isAssignableFrom(Date::class)) {
         return new Date($value);
       } else if ($t->isAssignableFrom(Bytes::class)) {
