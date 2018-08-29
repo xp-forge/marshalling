@@ -29,8 +29,7 @@ Value objects are marshalled using field => getter lookups; supporting both *met
 use util\data\Marshalling;
 
 class Person {
-  private $name;
-  private $age;
+  private $name, $age;
 
   public function __construct(string $name, int $age) {
     $this->name= $name;
@@ -43,6 +42,15 @@ class Person {
 
 $m= new Marshalling();
 $m->marshal(new Person('...', 42)); // ["name" => "...", "age" => 42]
+```
+
+When unmarshalling from maps, pass the type as second parameter:
+
+```php
+use util\data\Marshalling;
+
+$m= new Marshalling();
+$person= $m->unmarshal(['name' => '...', 'age' => 42], Person::class);
 ```
 
 Types from the "util" package are handled:
