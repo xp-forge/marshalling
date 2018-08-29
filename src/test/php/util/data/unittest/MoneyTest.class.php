@@ -1,6 +1,5 @@
 <?php namespace util\data\unittest;
 
-use lang\Type;
 use unittest\TestCase;
 use util\Currency;
 use util\Money;
@@ -20,7 +19,7 @@ class MoneyTest extends TestCase {
   public function unmarshal_money_uses_amount_and_currency() {
     $this->assertEquals(
       new Money(3.50, Currency::$EUR),
-      (new Marshalling())->unmarshal(['amount' => '3.5', 'currency' => 'EUR'], Type::forName(Money::class))
+      (new Marshalling())->unmarshal(['amount' => '3.5', 'currency' => 'EUR'], Money::class)
     );
   }
 }
