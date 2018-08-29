@@ -1,4 +1,4 @@
-<?php namespace util\data\unittest;
+<?php namespace util\data\unittest\fixtures;
 
 class Person {
   private static $ROOT = 0;

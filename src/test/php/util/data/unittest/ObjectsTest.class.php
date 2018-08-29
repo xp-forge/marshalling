@@ -3,6 +3,10 @@
 use lang\Type;
 use unittest\TestCase;
 use util\data\Marshalling;
+use util\data\unittest\fixtures\Activity;
+use util\data\unittest\fixtures\People;
+use util\data\unittest\fixtures\Person;
+use util\data\unittest\fixtures\PersonWithoutConstructor;
 
 class ObjectsTest extends TestCase {
 
@@ -51,7 +55,7 @@ class ObjectsTest extends TestCase {
 
   #[@test]
   public function unmarshal_person_value_object_from_inside_map() {
-    $type= Type::forName('[:util.data.unittest.Person]');
+    $type= Type::forName('[:util.data.unittest.fixtures.Person]');
     $this->assertEquals(
       ['person' => new Person(6100, 'Test')],
       (new Marshalling())->unmarshal(['person' => ['id' => 6100, 'name' => 'Test']], $type)
@@ -60,7 +64,7 @@ class ObjectsTest extends TestCase {
 
   #[@test]
   public function unmarshal_person_value_object_from_inside_array() {
-    $type= Type::forName('util.data.unittest.Person[]');
+    $type= Type::forName('util.data.unittest.fixtures.Person[]');
     $this->assertEquals(
       [new Person(6100, 'Test')],
       (new Marshalling())->unmarshal([['id' => 6100, 'name' => 'Test']], $type)
