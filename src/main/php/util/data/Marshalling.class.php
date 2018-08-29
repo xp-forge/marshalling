@@ -14,6 +14,12 @@ use util\Money;
  * Takes care of converting objects from and to maps
  *
  * @test  xp://util.data.unittest.MarshallingTest
+ * @test  xp://util.data.unittest.PrimitivesTest
+ * @test  xp://util.data.unittest.BytesTest
+ * @test  xp://util.data.unittest.DatesTest
+ * @test  xp://util.data.unittest.EnumsTest
+ * @test  xp://util.data.unittest.MoneyTest
+ * @test  xp://util.data.unittest.ObjectsTest
  */
 class Marshalling {
 
