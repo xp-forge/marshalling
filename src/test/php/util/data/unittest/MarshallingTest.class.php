@@ -10,4 +10,14 @@ class MarshallingTest extends TestCase {
   public function can_create() {
     new Marshalling();
   }
+
+  #[@test]
+  public function marshal() {
+    $this->assertEquals(1, (new Marshalling())->marshal(1));
+  }
+
+  #[@test, @values(['var', Type::$VAR])]
+  public function unmarshal($type) {
+    $this->assertEquals(1, (new Marshalling())->unmarshal(1, $type));
+  }
 }

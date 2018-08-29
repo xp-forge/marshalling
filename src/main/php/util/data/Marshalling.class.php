@@ -42,30 +42,32 @@ class Marshalling {
    * other types in a generic way, iterating over their instance fields.
    *
    * @param  var $value
-   * @param  lang.Type $type
+   * @param  ?lang.Type|string $type
    * @return var
    */
   public function unmarshal($value, $type) {
-    if ($type instanceof XPClass) {
-      if ($type->isInterface()) {
-        return $type->cast($value);
-      } else if ($type->isEnum()) {
-        return Enum::valueOf($type, $value);
-      } else if ($type->isInstance($value)) {
+    $t= $type instanceof Type ? $type : Type::forName($type);
+
+    if ($t instanceof XPClass) {
+      if ($t->isInterface()) {
+        return $t->cast($value);
+      } else if ($t->isEnum()) {
+        return Enum::valueOf($t, $value);
+      } else if ($t->isInstance($value)) {
         return $value;
-      } else if ($type->isAssignableFrom(Date::class)) {
+      } else if ($t->isAssignableFrom(Date::class)) {
         return new Date($value);
-      } else if ($type->isAssignableFrom(Bytes::class)) {
+      } else if ($t->isAssignableFrom(Bytes::class)) {
         return new Bytes(base64_decode($value));
-      } else if ($type->isAssignableFrom(Money::class)) {
+      } else if ($t->isAssignableFrom(Money::class)) {
         return new Money($value['amount'], Currency::getInstance($value['currency']));
-      } else if ($type->hasConstructor() && 1 === $type->getConstructor()->numParameters()) {
-        return $type->newInstance($value);
+      } else if ($t->hasConstructor() && 1 === $t->getConstructor()->numParameters()) {
+        return $t->newInstance($value);
       }
 
-      $n= $type->literal();
+      $n= $t->literal();
       $r= unserialize('O:'.strlen($n).':"'.$n.'":0:{}');
-      foreach ($type->getFields() as $field) {
+      foreach ($t->getFields() as $field) {
         $m= $field->getModifiers();
         if ($m & MODIFIER_STATIC) continue;
 
@@ -74,32 +76,34 @@ class Marshalling {
 
         if ($m & MODIFIER_PUBLIC) {
           $field->set($r, $this->unmarshal($value[$n], $field->getType()));
-        } else if ($type->hasMethod($set= 'set'.ucfirst($n))) {
-          $method= $type->getMethod($set);
+        } else if ($t->hasMethod($set= 'set'.ucfirst($n))) {
+          $method= $t->getMethod($set);
           $method->invoke($r, [$this->unmarshal($value[$n], $method->getParameter(0)->getType())]);
         } else {
           $field->setAccessible(true)->set($r, $this->unmarshal($value[$n], $field->getType()));
         }
       }
       return $r;
-    } else if ($type instanceof ArrayType || $type instanceof MapType) {
-      $t= $type->componentType();
+    } else if ($t instanceof ArrayType || $t instanceof MapType) {
+      $t= $t->componentType();
       $r= [];
       foreach ($value as $k => $v) {
         $r[$k]= $this->unmarshal($v, $t);
       }
       return $r;
-    } else if ($type === Type::$ARRAY) {
+    } else if ($t === Type::$ARRAY) {
       $t= Type::$VAR;
       $r= [];
       foreach ($value as $k => $v) {
         $r[$k]= $this->unmarshal($v, $t);
       }
       return $r;
-    } else if ($type === Type::$ITERABLE) {
+    } else if ($t === Type::$ITERABLE) {
       return $this->iterable($value, Type::$VAR);
+    } else if (null === $t) {
+      return $value;
     } else {
-      return $type->cast($value);
+      return $t->cast($value);
     }
   }
 
