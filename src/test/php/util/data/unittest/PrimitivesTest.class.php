@@ -27,4 +27,13 @@ class PrimitivesTest extends TestCase {
   public function unmarshal($value) {
     $this->assertEquals($value, (new Marshalling())->unmarshal($value));
   }
+
+  #[@test, @values([
+  #  ['0', 0],
+  #  ['1', 1],
+  #  ['-1', -1],
+  #])]
+  public function unmarshal_to_int_coerces_string($value, $expected) {
+    $this->assertEquals($expected, (new Marshalling())->unmarshal($value, 'int'));
+  }
 }
