@@ -22,6 +22,12 @@ use util\Money;
  * @test  xp://util.data.unittest.ObjectsTest
  */
 class Marshalling {
+  private $marshallers= [];
+
+  public function add($type, $marshaller) {
+    $this->marshallers[$type instanceof Type ? $type->literal() : literal($type)]= $marshaller;
+    return $this;
+  }
 
   /**
    * Applies unmarshal() to values inside an iterable
@@ -62,7 +68,13 @@ class Marshalling {
         return new Bytes(base64_decode($value));
       } else if ($t->isAssignableFrom(Money::class)) {
         return new Money($value['amount'], Currency::getInstance($value['currency']));
-      } else if ($t->hasConstructor() && 1 === $t->getConstructor()->numParameters()) {
+      }
+
+      foreach ($this->marshallers as $type => $marshaller) {
+        if ($t->isAssignableFrom($type)) return $marshaller->unmarshal($value, $type, $this);
+      }
+
+      if ($t->hasConstructor() && 1 === $t->getConstructor()->numParameters()) {
         return $t->newInstance($value);
       }
 
@@ -138,6 +150,9 @@ class Marshalling {
     } else if ($value instanceof \Traversable) {
       return $this->generator($value);
     } else if (is_object($value)) {
+      foreach ($this->marshallers as $type => $marshaller) {
+        if ($value instanceof $type) return $marshaller->marshal($value, $this);
+      }
       if (method_exists($value, '__toString')) return $value->__toString();
 
       $r= [];
