@@ -58,4 +58,25 @@ class IterablesTest extends TestCase {
       iterator_to_array((new Marshalling())->unmarshal(['one' => 1, 'two' => 2], Type::$ITERABLE))
     );
   }
+
+  #[@test]
+  public function unmarshal_util_iterator() {
+    $it= (new Marshalling())->unmarshal([1, 2, 3], XPIterator::class);
+    $result= [];
+    while ($it->hasNext()) {
+      $result[]= $it->next();
+    }
+    $this->assertEquals([1, 2, 3], $result);
+  }
+
+  #[@test]
+  public function unmarshal_generator_to_util_iterator() {
+    $f= function() { yield 1; yield 2; yield 3; };
+    $it= (new Marshalling())->unmarshal($f(), XPIterator::class);
+    $result= [];
+    while ($it->hasNext()) {
+      $result[]= $it->next();
+    }
+    $this->assertEquals([1, 2, 3], $result);
+  }
 }

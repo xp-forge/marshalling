@@ -51,9 +51,7 @@ class Marshalling {
 
     $t= $type instanceof Type ? $type : Type::forName($type);
     if ($t instanceof XPClass) {
-      if ($t->isInterface()) {
-        return $t->cast($value);
-      } else if ($t->isInstance($value)) {
+      if ($t->isInstance($value)) {
         return $value;
       } else if ($t->isEnum()) {
         return Enum::valueOf($t, $value);
@@ -63,6 +61,10 @@ class Marshalling {
         return new Bytes(base64_decode($value));
       } else if ($t->isAssignableFrom(Money::class)) {
         return new Money($value['amount'], Currency::getInstance($value['currency']));
+      } else if ($t->isAssignableFrom(XPIterator::class)) {
+        return new Iterator($value);
+      } else if ($t->isInterface()) {
+        return $t->cast($value);
       } else if ($t->hasConstructor() && 1 === $t->getConstructor()->numParameters()) {
         return $t->newInstance($value);
       }
