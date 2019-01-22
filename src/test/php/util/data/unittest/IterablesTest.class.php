@@ -2,6 +2,7 @@
 
 use lang\Type;
 use unittest\TestCase;
+use util\XPIterator;
 use util\data\Marshalling;
 
 class IterablesTest extends TestCase {
@@ -28,6 +29,16 @@ class IterablesTest extends TestCase {
   public function marshal_iterator_aggregate() {
     $iterator= newinstance(\IteratorAggregate::class, [], [
       'getIterator' => function() { yield 1; yield 2; yield 3; }
+    ]);
+    $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
+  }
+
+  #[@test]
+  public function marshal_util_iterator() {
+    $iterator= newinstance(XPIterator::class, [], [
+      'backing' => [1, 2, 3],
+      'hasNext' => function() { return !empty($this->backing); },
+      'next'    => function() { return array_shift($this->backing); },
     ]);
     $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
   }

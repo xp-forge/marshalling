@@ -9,6 +9,7 @@ use util\Bytes;
 use util\Currency;
 use util\Date;
 use util\Money;
+use util\XPIterator;
 
 /**
  * Takes care of converting objects from and to maps
@@ -119,6 +120,18 @@ class Marshalling {
   }
 
   /**
+   * Applies marshal() to values inside an iterator
+   *
+   * @param  util.XPIterator $in
+   * @return iterable
+   */
+  private function iterator($in) {
+    while ($in->hasNext()) {
+      yield $this->marshal($in->next());
+    }
+  }
+
+  /**
    * Marshals a value. Handles util.Date and util.Money instances specially,
    * converts objects with a `__toString` method and handles other objects
    * in a generic way, iterating over their instance fields.
@@ -137,6 +150,8 @@ class Marshalling {
       return $value->name();
     } else if ($value instanceof \Traversable) {
       return $this->generator($value);
+    } else if ($value instanceof XPIterator) {
+      return $this->iterator($value);
     } else if (is_object($value)) {
       if (method_exists($value, '__toString')) return $value->__toString();
 
