@@ -52,6 +52,15 @@ class IterablesTest extends TestCase {
   }
 
   #[@test]
+  public function unmarshal_generator_to_iterable() {
+    $f= function() { yield 1; yield 2; yield 3; };
+    $this->assertEquals(
+      [1, 2, 3],
+      iterator_to_array((new Marshalling())->unmarshal($f(), Type::$ITERABLE))
+    );
+  }
+
+  #[@test]
   public function unmarshal_keyvalue_iterable() {
     $this->assertEquals(
       ['one' => 1, 'two' => 2],
