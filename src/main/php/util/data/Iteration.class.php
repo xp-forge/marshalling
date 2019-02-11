@@ -2,7 +2,7 @@
 
 use util\XPIterator;
 
-class Iterator implements XPIterator {
+class Iteration implements XPIterator {
   private $iterable;
 
   /** @param iterable $arg */

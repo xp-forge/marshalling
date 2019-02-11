@@ -3,6 +3,11 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 0.3.1 / 2019-02-11
+
+* Fixed shadowing of `util.data.Iterator` class from xp-forge/sequence
+  (@thekid)
+
 ## 0.3.0 / 2019-01-22
 
 * Added support for `util.XPIterator` instances in marshalling
