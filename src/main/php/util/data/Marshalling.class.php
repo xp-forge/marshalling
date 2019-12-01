@@ -62,7 +62,7 @@ class Marshalling {
       } else if ($t->isAssignableFrom(Money::class)) {
         return new Money($value['amount'], Currency::getInstance($value['currency']));
       } else if ($t->isAssignableFrom(XPIterator::class)) {
-        return new Iterator($value);
+        return new Iteration($value);
       } else if ($t->isInterface()) {
         return $t->cast($value);
       } else if ($t->hasConstructor() && 1 === $t->getConstructor()->numParameters()) {

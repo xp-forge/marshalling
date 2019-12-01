@@ -3,9 +3,14 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
-## 0.3.1 / 2019-12-01
+## 0.3.2 / 2019-12-01
 
 * Made compatible with XP 10 - @thekid
+
+## 0.3.1 / 2019-02-11
+
+* Fixed shadowing of `util.data.Iterator` class from xp-forge/sequence
+  (@thekid)
 
 ## 0.3.0 / 2019-01-22
 
