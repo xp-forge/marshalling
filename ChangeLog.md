@@ -3,6 +3,10 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 0.3.1 / 2019-12-01
+
+* Made compatible with XP 10 - @thekid
+
 ## 0.3.0 / 2019-01-22
 
 * Added support for `util.XPIterator` instances in marshalling
