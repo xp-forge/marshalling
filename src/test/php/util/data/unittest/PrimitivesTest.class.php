@@ -1,6 +1,6 @@
 <?php namespace util\data\unittest;
 
-use unittest\TestCase;
+use unittest\{Test, TestCase, Values};
 use util\data\Marshalling;
 
 class PrimitivesTest extends TestCase {
@@ -18,21 +18,17 @@ class PrimitivesTest extends TestCase {
     ];
   }
 
-  #[@test, @values('fixtures')]
+  #[Test, Values('fixtures')]
   public function marshal($value) {
     $this->assertEquals($value, (new Marshalling())->marshal($value));
   }
 
-  #[@test, @values('fixtures')]
+  #[Test, Values('fixtures')]
   public function unmarshal($value) {
     $this->assertEquals($value, (new Marshalling())->unmarshal($value));
   }
 
-  #[@test, @values([
-  #  ['0', 0],
-  #  ['1', 1],
-  #  ['-1', -1],
-  #])]
+  #[Test, Values([['0', 0], ['1', 1], ['-1', -1],])]
   public function unmarshal_to_int_coerces_string($value, $expected) {
     $this->assertEquals($expected, (new Marshalling())->unmarshal($value, 'int'));
   }

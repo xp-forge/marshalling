@@ -1,13 +1,12 @@
 <?php namespace util\data\unittest;
 
-use unittest\TestCase;
-use util\Currency;
-use util\Money;
+use unittest\{Test, TestCase};
 use util\data\Marshalling;
+use util\{Currency, Money};
 
 class MoneyTest extends TestCase {
 
-  #[@test]
+  #[Test]
   public function marshal_money_uses_amount_and_currency() {
     $this->assertEquals(
       ['amount' => '3.5', 'currency' => 'EUR'],
@@ -15,7 +14,7 @@ class MoneyTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function unmarshal_money_uses_amount_and_currency() {
     $this->assertEquals(
       new Money(3.50, Currency::$EUR),

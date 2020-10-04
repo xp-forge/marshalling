@@ -1,12 +1,12 @@
 <?php namespace util\data\unittest;
 
-use unittest\TestCase;
+use unittest\{Test, TestCase};
 use util\Bytes;
 use util\data\Marshalling;
 
 class BytesTest extends TestCase {
 
-  #[@test]
+  #[Test]
   public function marshal_bytes_uses_base64() {
     $this->assertEquals(
       'UEsDBA==',
@@ -14,7 +14,7 @@ class BytesTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function unmarshal_bytes_from_base64() {
     $this->assertEquals(
       new Bytes("\x50\x4b\x03\x04"),

@@ -1,27 +1,27 @@
 <?php namespace util\data\unittest;
 
 use lang\Type;
-use unittest\TestCase;
+use unittest\{Test, TestCase, Values};
 use util\data\Marshalling;
 
 class MarshallingTest extends TestCase {
 
-  #[@test]
+  #[Test]
   public function can_create() {
     new Marshalling();
   }
 
-  #[@test]
+  #[Test]
   public function marshal() {
     $this->assertEquals(1, (new Marshalling())->marshal(1));
   }
 
-  #[@test, @values(['var', Type::$VAR])]
+  #[Test, Values(eval: '["var", Type::$VAR]')]
   public function unmarshal($type) {
     $this->assertEquals(1, (new Marshalling())->unmarshal(1, $type));
   }
 
-  #[@test]
+  #[Test]
   public function unmarshal_without_type() {
     $this->assertEquals(1, (new Marshalling())->unmarshal(1));
   }
