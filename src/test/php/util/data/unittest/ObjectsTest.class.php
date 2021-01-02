@@ -1,10 +1,10 @@
 <?php namespace util\data\unittest;
 
 use lang\Type;
-use unittest\Assert;
-use unittest\{Test, TestCase, Values};
+use unittest\{Assert, Test, Values};
+use util\Secret;
 use util\data\Marshalling;
-use util\data\unittest\fixtures\{Activity, Date, People, Person, PersonWithoutConstructor};
+use util\data\unittest\fixtures\{Activity, Authorization, Date, People, Person, PersonWithoutConstructor};
 
 class ObjectsTest {
 
@@ -37,6 +37,14 @@ class ObjectsTest {
     Assert::equals(
       ['list' => [['id' => 6100, 'name' => 'Test']]],
       (new Marshalling())->marshal(new People(new Person(6100, 'Test')))
+    );
+  }
+
+  #[Test]
+  public function marshal_value_with_special_serialize_method() {
+    Assert::equals(
+      ['token' => '098f6bcd4', 'type' => 'Bearer'],
+      (new Marshalling())->marshal(new Authorization(new Secret('098f6bcd4'), 'Bearer'))
     );
   }
 
@@ -104,6 +112,14 @@ class ObjectsTest {
     Assert::equals(
       (new Activity())->setSubscribables($subscribables),
       (new Marshalling())->unmarshal(['subscribables' => $subscribables], Activity::class)
+    );
+  }
+
+  #[Test]
+  public function unmarshal_value_with_special_unserialize_method() {
+    Assert::equals(
+      new Authorization(new Secret('098f6bcd4'), 'Bearer'),
+      (new Marshalling())->unmarshal(['token' => '098f6bcd4', 'type' => 'Bearer'], Authorization::class)
     );
   }
 }
