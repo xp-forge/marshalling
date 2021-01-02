@@ -45,11 +45,8 @@ class Marshalling {
    * @return bool
    */
   private function constructorAccepts($type, $value) {
-    return (
-      $type->hasConstructor() &&
-      1 === sizeof($params= $type->getConstructor()->getParameters()) &&
-      $params[0]->getType()->isInstance($value)
-    );
+    $params= $type->getConstructor()->getParameters();
+    return 1 === sizeof($params) && $params[0]->getType()->isInstance($value);
   }
 
   /**
@@ -80,7 +77,7 @@ class Marshalling {
         return new Iteration($value);
       } else if ($t->isInterface()) {
         return $t->cast($value);
-      } else if ($this->constructorAccepts($t, $value)) {
+      } else if ($t->hasConstructor() && $this->constructorAccepts($t, $value)) {
         return $t->newInstance($value);
       }
 
