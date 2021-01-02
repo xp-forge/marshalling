@@ -1,23 +1,24 @@
 <?php namespace util\data\unittest;
 
+use unittest\Assert;
 use unittest\{Test, TestCase, Values};
 use util\Currency;
 use util\data\Marshalling;
 
-class EnumsTest extends TestCase {
+class EnumsTest {
 
   #[Test]
   public function marshal_enum() {
-    $this->assertEquals('EUR', (new Marshalling())->marshal(Currency::$EUR));
+    Assert::equals('EUR', (new Marshalling())->marshal(Currency::$EUR));
   }
 
   #[Test]
   public function unmarshal_enum_name() {
-    $this->assertEquals(Currency::$EUR, (new Marshalling())->unmarshal('EUR', Currency::class));
+    Assert::equals(Currency::$EUR, (new Marshalling())->unmarshal('EUR', Currency::class));
   }
 
   #[Test]
   public function unmarshal_enum_instance() {
-    $this->assertEquals(Currency::$EUR, (new Marshalling())->unmarshal(Currency::$EUR, Currency::class));
+    Assert::equals(Currency::$EUR, (new Marshalling())->unmarshal(Currency::$EUR, Currency::class));
   }
 }

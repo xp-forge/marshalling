@@ -1,28 +1,29 @@
 <?php namespace util\data\unittest;
 
 use lang\Type;
+use unittest\Assert;
 use unittest\{Test, TestCase};
 use util\XPIterator;
 use util\data\Marshalling;
 
-class IterablesTest extends TestCase {
+class IterablesTest {
 
   #[Test]
   public function marshal_generator() {
     $generator= function() { yield 1; yield 2; yield 3; };
-    $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($generator())));
+    Assert::equals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($generator())));
   }
 
   #[Test]
   public function marshal_keyvalue_generator() {
     $generator= function() { yield 'one' => 1; yield 'two' => 2; };
-    $this->assertEquals(['one' => 1, 'two' => 2], iterator_to_array((new Marshalling())->marshal($generator())));
+    Assert::equals(['one' => 1, 'two' => 2], iterator_to_array((new Marshalling())->marshal($generator())));
   }
 
   #[Test]
   public function marshal_iterator() {
     $iterator= new \ArrayIterator([1, 2, 3]);
-    $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
+    Assert::equals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
   }
 
   #[Test]
@@ -30,7 +31,7 @@ class IterablesTest extends TestCase {
     $iterator= newinstance(\IteratorAggregate::class, [], [
       'getIterator' => function() { yield 1; yield 2; yield 3; }
     ]);
-    $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
+    Assert::equals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
   }
 
   #[Test]
@@ -40,12 +41,12 @@ class IterablesTest extends TestCase {
       'hasNext' => function() { return !empty($this->backing); },
       'next'    => function() { return array_shift($this->backing); },
     ]);
-    $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
+    Assert::equals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
   }
 
   #[Test]
   public function unmarshal_iterable() {
-    $this->assertEquals(
+    Assert::equals(
       [1, 2, 3],
       iterator_to_array((new Marshalling())->unmarshal([1, 2, 3], Type::$ITERABLE))
     );
@@ -54,7 +55,7 @@ class IterablesTest extends TestCase {
   #[Test]
   public function unmarshal_generator_to_iterable() {
     $f= function() { yield 1; yield 2; yield 3; };
-    $this->assertEquals(
+    Assert::equals(
       [1, 2, 3],
       iterator_to_array((new Marshalling())->unmarshal($f(), Type::$ITERABLE))
     );
@@ -62,7 +63,7 @@ class IterablesTest extends TestCase {
 
   #[Test]
   public function unmarshal_keyvalue_iterable() {
-    $this->assertEquals(
+    Assert::equals(
       ['one' => 1, 'two' => 2],
       iterator_to_array((new Marshalling())->unmarshal(['one' => 1, 'two' => 2], Type::$ITERABLE))
     );
@@ -75,7 +76,7 @@ class IterablesTest extends TestCase {
     while ($it->hasNext()) {
       $result[]= $it->next();
     }
-    $this->assertEquals([1, 2, 3], $result);
+    Assert::equals([1, 2, 3], $result);
   }
 
   #[Test]
@@ -86,6 +87,6 @@ class IterablesTest extends TestCase {
     while ($it->hasNext()) {
       $result[]= $it->next();
     }
-    $this->assertEquals([1, 2, 3], $result);
+    Assert::equals([1, 2, 3], $result);
   }
 }
