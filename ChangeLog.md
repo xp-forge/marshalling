@@ -3,6 +3,11 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 1.1.0 / 2021-01-02
+
+* Merged PR #1: Add support for `__serialize()` and `__unserialize()`
+  (@thekid)
+
 ## 1.0.1 / 2021-01-02
 
 * Only construct objects with one-arg constructors if their parameter
