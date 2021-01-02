@@ -3,6 +3,11 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 1.0.1 / 2021-01-02
+
+* Only construct objects with one-arg constructors if their parameter
+  accepts the argument
+
 ## 1.0.0 / 2019-12-01
 
 * Implemented xp-framework/rfc#334: Drop PHP 5.6. The minimum required
