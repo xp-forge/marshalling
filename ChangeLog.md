@@ -7,6 +7,7 @@ Marshalling change log
 
 * Only construct objects with one-arg constructors if their parameter
   accepts the argument
+  (@thekid)
 
 ## 1.0.0 / 2019-12-01
 
