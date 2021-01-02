@@ -4,7 +4,7 @@ use lang\Type;
 use unittest\Assert;
 use unittest\{Test, TestCase, Values};
 use util\data\Marshalling;
-use util\data\unittest\fixtures\{Activity, People, Person, PersonWithoutConstructor};
+use util\data\unittest\fixtures\{Activity, Date, People, Person, PersonWithoutConstructor};
 
 class ObjectsTest {
 
@@ -63,6 +63,22 @@ class ObjectsTest {
     Assert::equals(
       [new Person(6100, 'Test')],
       (new Marshalling())->unmarshal([['id' => 6100, 'name' => 'Test']], $type)
+    );
+  }
+
+  #[Test, Values([1609619853, '2021-01-02T21:37:33+01:00'])]
+  public function unmarshal_single_argument_constructor($arg) {
+    Assert::equals(
+      new Date(1609619853),
+      (new Marshalling())->unmarshal($arg, Date::class)
+    );
+  }
+
+  #[Test]
+  public function unmarshal_single_argument_constructor_with_member_hash() {
+    Assert::equals(
+      new Date(1609619853),
+      (new Marshalling())->unmarshal(['timestamp' => 1609619853], Date::class)
     );
   }
 

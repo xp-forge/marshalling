@@ -38,6 +38,21 @@ class Marshalling {
   }
 
   /**
+   * Check whether a type's constructor accepts a given value
+   *
+   * @param  lang.Type $type
+   * @param  var $value
+   * @return bool
+   */
+  private function constructorAccepts($type, $value) {
+    return (
+      $type->hasConstructor() &&
+      1 === sizeof($params= $type->getConstructor()->getParameters()) &&
+      $params[0]->getType()->isInstance($value)
+    );
+  }
+
+  /**
    * Unmarshals a value. Handles util.Date and util.Money instances specially,
    * creates instances if the type has a single-argument constructor; treats
    * other types in a generic way, iterating over their instance fields.
@@ -65,7 +80,7 @@ class Marshalling {
         return new Iteration($value);
       } else if ($t->isInterface()) {
         return $t->cast($value);
-      } else if ($t->hasConstructor() && 1 === $t->getConstructor()->numParameters()) {
+      } else if ($this->constructorAccepts($t, $value)) {
         return $t->newInstance($value);
       }
 
