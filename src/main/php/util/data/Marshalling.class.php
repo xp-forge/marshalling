@@ -81,8 +81,12 @@ class Marshalling {
         return $t->newInstance($value);
       }
 
-      $n= $t->literal();
-      $r= unserialize('O:'.strlen($n).':"'.$n.'":0:{}');
+      $r= $t->reflect()->newInstanceWithoutConstructor();
+      if (method_exists($r, '__unserialize')) {
+        $r->__unserialize($value);
+        return $r;
+      }
+
       foreach ($t->getFields() as $field) {
         $m= $field->getModifiers();
         if ($m & MODIFIER_STATIC) continue;
@@ -167,6 +171,7 @@ class Marshalling {
     } else if ($value instanceof XPIterator) {
       return $this->iterator($value);
     } else if (is_object($value)) {
+      if (method_exists($value, '__serialize')) return $value->__serialize();
       if (method_exists($value, '__toString')) return $value->__toString();
 
       $r= [];
