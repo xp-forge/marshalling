@@ -1,16 +1,7 @@
 <?php namespace util\data;
 
-use lang\ArrayType;
-use lang\Enum;
-use lang\MapType;
-use lang\Reflection;
-use lang\Type;
-use lang\XPClass;
-use util\Bytes;
-use util\Currency;
-use util\Date;
-use util\Money;
-use util\XPIterator;
+use lang\{ArrayType, Enum, MapType, Reflection, Type, XPClass};
+use util\{Bytes, Currency, Date, Money, XPIterator};
 
 /**
  * Takes care of converting objects from and to maps
