@@ -1,15 +1,7 @@
 <?php namespace util\data;
 
-use lang\ArrayType;
-use lang\Enum;
-use lang\MapType;
-use lang\Type;
-use lang\XPClass;
-use util\Bytes;
-use util\Currency;
-use util\Date;
-use util\Money;
-use util\XPIterator;
+use lang\{ArrayType, Enum, MapType, Reflection, Type, XPClass};
+use util\{Bytes, Currency, Date, Money, XPIterator};
 
 /**
  * Takes care of converting objects from and to maps
@@ -35,18 +27,6 @@ class Marshalling {
     foreach ($in as $key => $value) {
       yield $key => $this->unmarshal($value, $type);
     }
-  }
-
-  /**
-   * Check whether a type's constructor accepts a given value
-   *
-   * @param  lang.Type $type
-   * @param  var $value
-   * @return bool
-   */
-  private function constructorAccepts($type, $value) {
-    $params= $type->getConstructor()->getParameters();
-    return 1 === sizeof($params) && $params[0]->getType()->isInstance($value);
   }
 
   /**
@@ -77,30 +57,27 @@ class Marshalling {
         return new Iteration($value);
       } else if ($t->isInterface()) {
         return $t->cast($value);
-      } else if ($t->hasConstructor() && $this->constructorAccepts($t, $value)) {
-        return $t->newInstance($value);
       }
 
-      $r= $t->reflect()->newInstanceWithoutConstructor();
-      if (method_exists($r, '__unserialize')) {
-        $r->__unserialize($value);
-        return $r;
+      $reflect= Reflection::of($t);
+      if ($i= $reflect->initializer('__unserialize')) {
+        return $i->newInstance([$value]);
+      } else if (($c= $reflect->constructor()) && $c->parameters()->accept([$value], 1)) {
+        return $c->newInstance([$value]);
       }
 
-      foreach ($t->getFields() as $field) {
-        $m= $field->getModifiers();
-        if ($m & MODIFIER_STATIC) continue;
+      $r= $reflect->initializer(null)->newInstance();
+      foreach ($reflect->properties() as $property) {
+        $m= $property->modifiers();
+        if ($m->isStatic()) continue;
 
-        $n= $field->getName();
+        $n= $property->name();
         if (!isset($value[$n])) continue;
 
-        if ($m & MODIFIER_PUBLIC) {
-          $field->set($r, $this->unmarshal($value[$n], $field->getType()));
-        } else if ($t->hasMethod($set= 'set'.ucfirst($n))) {
-          $method= $t->getMethod($set);
-          $method->invoke($r, [$this->unmarshal($value[$n], $method->getParameter(0)->getType())]);
+        if (!$m->isPublic() && ($setter= $reflect->method('set'.ucfirst($n)))) {
+          $setter->invoke($r, [$this->unmarshal($value[$n], $setter->parameter(0)->constraint()->type())]);
         } else {
-          $field->setAccessible(true)->set($r, $this->unmarshal($value[$n], $field->getType()));
+          $property->set($r, $this->unmarshal($value[$n], $property->constraint()->type()), $reflect);
         }
       }
       return $r;
@@ -174,23 +151,18 @@ class Marshalling {
       if (method_exists($value, '__serialize')) return $value->__serialize();
       if (method_exists($value, '__toString')) return $value->__toString();
 
+      $reflect= Reflection::of($value);
       $r= [];
-      $type= typeof($value);
-      foreach ($type->getFields() as $field) {
-        $m= $field->getModifiers();
-        if ($m & MODIFIER_STATIC) continue;
+      foreach ($reflect->properties() as $property) {
+        $m= $property->modifiers();
+        if ($m->isStatic()) continue;
 
-        $n= $field->getName();
-        if ($m & MODIFIER_PUBLIC) {
-          $v= $field->get($value);
-        } else if ($type->hasMethod($n)) {
-          $v= $type->getMethod($n)->invoke($value, []);
-        } else if ($type->hasMethod($get= 'get'.ucfirst($n))) {
-          $v= $type->getMethod($get)->invoke($value, []);
+        $n= $property->name();
+        if (!$m->isPublic() && ($method= $reflect->method($n) ?? $reflect->method('set'.ucfirst($n)))) {
+          $r[$n]= $this->marshal($method->invoke($value, []));
         } else {
-          $v= $field->setAccessible(true)->get($value);
+          $r[$n]= $this->marshal($property->get($value, $reflect));
         }
-        $r[$n]= $this->marshal($v);
       }
       return $r;
     } else if (is_array($value)) {
