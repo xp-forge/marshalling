@@ -62,11 +62,11 @@ class Marshalling {
       $reflect= Reflection::of($t);
       if ($i= $reflect->initializer('__unserialize')) {
         return $i->newInstance([$value]);
-      } else if (($c= $reflect->constructor()) && 1 === $c->parameters()->size() && $c->accepts([$value])) {
+      } else if (($c= $reflect->constructor()) && $c->parameters()->accept([$value], 1)) {
         return $c->newInstance([$value]);
       }
 
-      $r= $reflect->initializer(function() { })->newInstance();
+      $r= $reflect->initializer(null)->newInstance();
       foreach ($reflect->properties() as $property) {
         $m= $property->modifiers();
         if ($m->isStatic()) continue;
