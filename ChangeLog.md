@@ -3,6 +3,7 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+* Made library compatible with XP 11 - @thekid
 * Made compatible with PHP 8.1 - add `ReturnTypeWillChange` attributes to
   iterator, see https://wiki.php.net/rfc/internal_method_return_types
   (@thekid)
