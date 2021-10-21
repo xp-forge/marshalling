@@ -1,8 +1,7 @@
 <?php namespace util\data\unittest;
 
 use lang\Type;
-use unittest\Assert;
-use unittest\{Test, TestCase};
+use unittest\{Assert, Test};
 use util\XPIterator;
 use util\data\Marshalling;
 
@@ -29,7 +28,7 @@ class IterablesTest {
   #[Test]
   public function marshal_iterator_aggregate() {
     $iterator= newinstance(\IteratorAggregate::class, [], [
-      'getIterator' => function() { yield 1; yield 2; yield 3; }
+      'getIterator' => function(): \Traversable { yield 1; yield 2; yield 3; }
     ]);
     Assert::equals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
   }

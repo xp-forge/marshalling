@@ -3,6 +3,10 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+* Made compatible with PHP 8.1 - add `ReturnTypeWillChange` attributes to
+  iterator, see https://wiki.php.net/rfc/internal_method_return_types
+  (@thekid)
+
 ## 1.1.0 / 2021-01-02
 
 * Merged PR #1: Add support for `__serialize()` and `__unserialize()`
