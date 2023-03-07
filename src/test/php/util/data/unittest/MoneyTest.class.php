@@ -1,7 +1,7 @@
 <?php namespace util\data\unittest;
 
-use unittest\Assert;
-use unittest\{Test, TestCase};
+use test\Assert;
+use test\{Test, TestCase};
 use util\data\Marshalling;
 use util\{Currency, Money};
 
