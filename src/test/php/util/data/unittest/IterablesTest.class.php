@@ -1,7 +1,7 @@
 <?php namespace util\data\unittest;
 
 use lang\Type;
-use unittest\{Assert, Test};
+use test\{Assert, Test};
 use util\XPIterator;
 use util\data\Marshalling;
 

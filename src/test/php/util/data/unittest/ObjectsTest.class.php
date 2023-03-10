@@ -1,7 +1,7 @@
 <?php namespace util\data\unittest;
 
 use lang\Type;
-use unittest\{Assert, Test, Values};
+use test\{Assert, Test, Values};
 use util\Secret;
 use util\data\Marshalling;
 use util\data\unittest\fixtures\{Activity, Authorization, Date, People, Person, PersonWithoutConstructor};

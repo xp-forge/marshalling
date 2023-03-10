@@ -1,7 +1,7 @@
 <?php namespace util\data\unittest;
 
 use lang\Type;
-use unittest\{Test, Assert, Values};
+use test\{Assert, Test, Values};
 use util\data\Marshalling;
 
 class MarshallingTest {

@@ -1,7 +1,7 @@
 <?php namespace util\data\unittest;
 
-use unittest\Assert;
-use unittest\{Test, TestCase, Values};
+use test\Assert;
+use test\{Test, TestCase, Values};
 use util\data\Marshalling;
 
 class PrimitivesTest {
@@ -19,12 +19,12 @@ class PrimitivesTest {
     ];
   }
 
-  #[Test, Values('fixtures')]
+  #[Test, Values(from: 'fixtures')]
   public function marshal($value) {
     Assert::equals($value, (new Marshalling())->marshal($value));
   }
 
-  #[Test, Values('fixtures')]
+  #[Test, Values(from: 'fixtures')]
   public function unmarshal($value) {
     Assert::equals($value, (new Marshalling())->unmarshal($value));
   }
