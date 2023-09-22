@@ -1,26 +1,18 @@
 <?php namespace util\data;
 
-use lang\ArrayType;
-use lang\Enum;
-use lang\MapType;
-use lang\Type;
-use lang\XPClass;
-use util\Bytes;
-use util\Currency;
-use util\Date;
-use util\Money;
-use util\XPIterator;
+use lang\{ArrayType, Enum, MapType, Type, XPClass};
+use util\{Bytes, Currency, Date, Money, XPIterator};
 
 /**
  * Takes care of converting objects from and to maps
  *
- * @test  xp://util.data.unittest.MarshallingTest
- * @test  xp://util.data.unittest.PrimitivesTest
- * @test  xp://util.data.unittest.BytesTest
- * @test  xp://util.data.unittest.DatesTest
- * @test  xp://util.data.unittest.EnumsTest
- * @test  xp://util.data.unittest.MoneyTest
- * @test  xp://util.data.unittest.ObjectsTest
+ * @test  util.data.unittest.MarshallingTest
+ * @test  util.data.unittest.PrimitivesTest
+ * @test  util.data.unittest.BytesTest
+ * @test  util.data.unittest.DatesTest
+ * @test  util.data.unittest.EnumsTest
+ * @test  util.data.unittest.MoneyTest
+ * @test  util.data.unittest.ObjectsTest
  */
 class Marshalling {
 
@@ -107,14 +99,14 @@ class Marshalling {
     } else if ($t instanceof ArrayType || $t instanceof MapType) {
       $t= $t->componentType();
       $r= [];
-      foreach ($value as $k => $v) {
+      foreach ($value instanceof \Traversable ? $value : (array)$value as $k => $v) {
         $r[$k]= $this->unmarshal($v, $t);
       }
       return $r;
     } else if ($t === Type::$ARRAY) {
       $t= Type::$VAR;
       $r= [];
-      foreach ($value as $k => $v) {
+      foreach ($value instanceof \Traversable ? $value : (array)$value as $k => $v) {
         $r[$k]= $this->unmarshal($v, $t);
       }
       return $r;
