@@ -1,6 +1,6 @@
 <?php namespace util\data;
 
-use lang\{ArrayType, Enum, MapType, Type, XPClass};
+use lang\{ArrayType, Enum, MapType, Reflection, Type, XPClass};
 use util\{Bytes, Currency, Date, Money, XPIterator};
 
 /**
@@ -27,18 +27,6 @@ class Marshalling {
     foreach ($in as $key => $value) {
       yield $key => $this->unmarshal($value, $type);
     }
-  }
-
-  /**
-   * Check whether a type's constructor accepts a given value
-   *
-   * @param  lang.Type $type
-   * @param  var $value
-   * @return bool
-   */
-  private function constructorAccepts($type, $value) {
-    $params= $type->getConstructor()->getParameters();
-    return 1 === sizeof($params) && $params[0]->getType()->isInstance($value);
   }
 
   /**
@@ -69,30 +57,27 @@ class Marshalling {
         return new Iteration($value);
       } else if ($t->isInterface()) {
         return $t->cast($value);
-      } else if ($t->hasConstructor() && $this->constructorAccepts($t, $value)) {
-        return $t->newInstance($value);
       }
 
-      $r= $t->reflect()->newInstanceWithoutConstructor();
+      $reflect= Reflection::type($t);
+      if (($c= $reflect->constructor()) && $c->parameters()->accept([$value], 1)) {
+        return $c->newInstance([$value]);
+      }
+
+      $r= $reflect->initializer(null)->newInstance();
       if (method_exists($r, '__unserialize')) {
         $r->__unserialize($value);
         return $r;
       }
 
-      foreach ($t->getFields() as $field) {
-        $m= $field->getModifiers();
-        if ($m & MODIFIER_STATIC) continue;
-
-        $n= $field->getName();
-        if (!isset($value[$n])) continue;
-
-        if ($m & MODIFIER_PUBLIC) {
-          $field->set($r, $this->unmarshal($value[$n], $field->getType()));
-        } else if ($t->hasMethod($set= 'set'.ucfirst($n))) {
-          $method= $t->getMethod($set);
-          $method->invoke($r, [$this->unmarshal($value[$n], $method->getParameter(0)->getType())]);
+      foreach ($reflect->properties() as $name => $p) {
+        $modifiers= $p->modifiers();
+        if ($modifiers->isStatic() || !isset($value[$name])) {
+          continue;
+        } else if ($m= $reflect->method('set'.ucfirst($name))) {
+          $m->invoke($r, [$this->unmarshal($value[$name], $m->parameter(0)->constraint()->type())]);
         } else {
-          $field->setAccessible(true)->set($r, $this->unmarshal($value[$n], $field->getType()));
+          $p->set($r, $this->unmarshal($value[$name], $p->constraint()->type()), $reflect);
         }
       }
       return $r;
@@ -167,22 +152,16 @@ class Marshalling {
       if (method_exists($value, '__toString')) return $value->__toString();
 
       $r= [];
-      $type= typeof($value);
-      foreach ($type->getFields() as $field) {
-        $m= $field->getModifiers();
-        if ($m & MODIFIER_STATIC) continue;
-
-        $n= $field->getName();
-        if ($m & MODIFIER_PUBLIC) {
-          $v= $field->get($value);
-        } else if ($type->hasMethod($n)) {
-          $v= $type->getMethod($n)->invoke($value, []);
-        } else if ($type->hasMethod($get= 'get'.ucfirst($n))) {
-          $v= $type->getMethod($get)->invoke($value, []);
+      $reflect= Reflection::type($value);
+      foreach ($reflect->properties() as $name => $p) {
+        $modifiers= $p->modifiers();
+        if ($modifiers->isStatic()) {
+          continue;
+        } else if ($m= $reflect->method($name) ?? $reflect->method('get'.ucfirst($name))) {
+          $r[$name]= $this->marshal($m->invoke($value, []));
         } else {
-          $v= $field->setAccessible(true)->get($value);
+          $r[$name]= $this->marshal($p->get($value, $reflect));
         }
-        $r[$n]= $this->marshal($v);
       }
       return $r;
     } else if (is_array($value)) {
