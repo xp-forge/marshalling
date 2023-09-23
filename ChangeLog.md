@@ -3,6 +3,7 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #5: Migrate to new reflection API - @thekid
 * Merged PR #3: Migrate to new testing library - @thekid
 
 ## 1.1.1 / 2021-10-21
