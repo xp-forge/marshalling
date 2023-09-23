@@ -60,14 +60,8 @@ class Marshalling {
       }
 
       $reflect= Reflection::type($t);
-
-      // If a single-argument constructor accepting the value exists, invoke it.
-      if (
-        ($constructor= $reflect->constructor()) &&
-        (1 === $constructor->parameters()->size()) &&
-        $constructor->parameter(0)->constraint()->type()->isInstance($value)
-      ) {
-        return $constructor->newInstance([$value]);
+      if (($c= $reflect->constructor()) && $c->parameters()->accept([$value], 1)) {
+        return $c->newInstance([$value]);
       }
 
       $r= $reflect->initializer(null)->newInstance();
