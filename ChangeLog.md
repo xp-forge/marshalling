@@ -3,6 +3,13 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 2.0.0 / 2023-09-24
+
+The second major release changes the way scalars are marshalled to
+arrays: Previously, they resulted in an empty array and a warning
+being raised. Now, they result in an array of themselves.
+
+* Merged PR #4: Unmarshal scalars and null to arrays - @thekid
 * Merged PR #5: Migrate to new reflection API - @thekid
 * Merged PR #3: Migrate to new testing library - @thekid
 
@@ -25,6 +32,9 @@ Marshalling change log
   (@thekid)
 
 ## 1.0.0 / 2019-12-01
+
+The first major release changes no functionality, but drops support for
+PHP 5, which has been EOL for almost a year at the time of this release.
 
 * Implemented xp-framework/rfc#334: Drop PHP 5.6. The minimum required
   PHP version is now 7.0.0!
