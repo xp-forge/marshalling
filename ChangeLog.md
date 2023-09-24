@@ -5,8 +5,8 @@ Marshalling change log
 
 ## 2.0.0 / 2023-09-24
 
-The second major release changes the way scalars are marshalled to
-arrays: Previously, they resulted in an empty array and a warning
+The second major release changes the way scalars are unmarshalled to
+arrays: Previously, they resulted in an empty array and a PHP warning
 being raised. Now, they result in an array of themselves.
 
 * Merged PR #4: Unmarshal scalars and null to arrays - @thekid
