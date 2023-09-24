@@ -1,5 +1,6 @@
 <?php namespace util\data;
 
+use Traversable;
 use lang\{ArrayType, Enum, MapType, Reflection, Type, XPClass};
 use util\{Bytes, Currency, Date, Money, XPIterator};
 
@@ -84,14 +85,14 @@ class Marshalling {
     } else if ($t instanceof ArrayType || $t instanceof MapType) {
       $t= $t->componentType();
       $r= [];
-      foreach ($value as $k => $v) {
+      foreach ($value instanceof Traversable ? $value : (array)$value as $k => $v) {
         $r[$k]= $this->unmarshal($v, $t);
       }
       return $r;
     } else if ($t === Type::$ARRAY) {
       $t= Type::$VAR;
       $r= [];
-      foreach ($value as $k => $v) {
+      foreach ($value instanceof Traversable ? $value : (array)$value as $k => $v) {
         $r[$k]= $this->unmarshal($v, $t);
       }
       return $r;
@@ -143,7 +144,7 @@ class Marshalling {
       return ['amount' => $value->amount(), 'currency' => $value->currency()->name()];
     } else if ($value instanceof Enum) {
       return $value->name();
-    } else if ($value instanceof \Traversable) {
+    } else if ($value instanceof Traversable) {
       return $this->generator($value);
     } else if ($value instanceof XPIterator) {
       return $this->iterator($value);

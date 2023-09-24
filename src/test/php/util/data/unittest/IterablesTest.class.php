@@ -1,7 +1,7 @@
 <?php namespace util\data\unittest;
 
 use lang\Type;
-use test\{Assert, Test};
+use test\{Assert, Test, Values};
 use util\XPIterator;
 use util\data\Marshalling;
 
@@ -87,5 +87,26 @@ class IterablesTest {
       $result[]= $it->next();
     }
     Assert::equals([1, 2, 3], $result);
+  }
+
+  #[Test, Values([[[1, 2, 3]], [['color' => 'green']]])]
+  public function unmarshal_array_to_array($value) {
+    Assert::equals($value, (new Marshalling())->unmarshal($value, Type::$ARRAY));
+  }
+
+  #[Test]
+  public function unmarshal_iterable_to_array() {
+    $f= function() { yield 1; yield 2; yield 3; };
+    Assert::equals([1, 2, 3], (new Marshalling())->unmarshal($f(), Type::$ARRAY));
+  }
+
+  #[Test, Values(['one', 1, 0, -1.5, true, false])]
+  public function unmarshal_scalar_to_array() {
+    Assert::equals([], (new Marshalling())->unmarshal(null, Type::$ARRAY));
+  }
+
+  #[Test]
+  public function unmarshal_null_to_array() {
+    Assert::equals([], (new Marshalling())->unmarshal(null, Type::$ARRAY));
   }
 }
