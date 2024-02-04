@@ -3,6 +3,8 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+* Added PHP 8.4 to the test matrix - @thekid
+
 ## 2.0.0 / 2023-09-24
 
 The second major release changes the way scalars are unmarshalled to
