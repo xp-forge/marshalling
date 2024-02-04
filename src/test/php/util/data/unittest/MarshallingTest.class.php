@@ -16,6 +16,11 @@ class MarshallingTest {
     Assert::equals(1, (new Marshalling())->marshal(1));
   }
 
+  #[Test]
+  public function objects() {
+    Assert::equals((object)[], (new Marshalling())->marshal((object)[]));
+  }
+
   #[Test, Values(eval: '["var", Type::$VAR]')]
   public function unmarshal($type) {
     Assert::equals(1, (new Marshalling())->unmarshal(1, $type));

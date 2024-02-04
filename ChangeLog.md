@@ -5,6 +5,11 @@ Marshalling change log
 
 * Added PHP 8.4 to the test matrix - @thekid
 
+## 2.1.0 / 2024-01-09
+
+* Added PHP 8.4 to test matrix - @thekid
+* Merged PR #29: Keep empty objects intact - @thekid
+
 ## 2.0.0 / 2023-09-24
 
 The second major release changes the way scalars are unmarshalled to

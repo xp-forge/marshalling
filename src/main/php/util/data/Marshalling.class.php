@@ -164,7 +164,7 @@ class Marshalling {
           $r[$name]= $this->marshal($p->get($value, $reflect));
         }
       }
-      return $r;
+      return empty($r) ? (object)$r : $r;
     } else if (is_array($value)) {
       $r= [];
       foreach ($value as $k => $v) {
