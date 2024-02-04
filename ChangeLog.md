@@ -3,8 +3,6 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
-* Added PHP 8.4 to the test matrix - @thekid
-
 ## 2.1.0 / 2024-01-09
 
 * Added PHP 8.4 to test matrix - @thekid
