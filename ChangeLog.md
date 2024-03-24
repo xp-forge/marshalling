@@ -3,6 +3,10 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 2.2.0 / 2024-03-24
+
+* Made compatible with XP 12 - @thekid
+
 ## 2.1.0 / 2024-01-09
 
 * Added PHP 8.4 to test matrix - @thekid
