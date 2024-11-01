@@ -18,6 +18,26 @@ use util\{Bytes, Currency, Date, Money, XPIterator};
 class Marshalling {
   private $mappings= [];
 
+  /** Creates marshalling with default mappings for classes in `util` */
+  public function __construct() {
+    $this->mappings[Date::class]= [
+      function($value) { return $value->toString(DATE_ISO8601); },
+      function($value) { return new Date($value); },
+    ];
+    $this->mappings[Bytes::class]= [
+      function($value) { return base64_encode($value); },
+      function($value) { return new Bytes(base64_decode($value)); },
+    ];
+    $this->mappings[Money::class]= [
+      function($value) { return ['amount' => $value->amount(), 'currency' => $value->currency()->name()]; },
+      function($value) { return new Money($value['amount'], Currency::getInstance($value['currency'])); },
+    ];
+    $this->mappings[XPIterator::class]= [
+      function($value) { return $this->iterator($value); },
+      function($value, $t) { return new Iteration($value); },
+    ];
+  }
+
   /**
    * Maps user type marshalling
    *
@@ -77,14 +97,6 @@ class Marshalling {
         return $value;
       } else if ($t->isEnum()) {
         return Enum::valueOf($t, $value);
-      } else if ($t->isAssignableFrom(Date::class)) {
-        return new Date($value);
-      } else if ($t->isAssignableFrom(Bytes::class)) {
-        return new Bytes(base64_decode($value));
-      } else if ($t->isAssignableFrom(Money::class)) {
-        return new Money($value['amount'], Currency::getInstance($value['currency']));
-      } else if ($t->isAssignableFrom(XPIterator::class)) {
-        return new Iteration($value);
       } else if ($t->isInterface()) {
         return $t->cast($value);
       }
@@ -165,21 +177,15 @@ class Marshalling {
    * @return var
    */
   public function marshal($value) {
-    if ($value instanceof Date) {
-      return $value->toString(DATE_ISO8601);
-    } else if ($value instanceof Bytes) {
-      return base64_encode($value);
-    } else if ($value instanceof Money) {
-      return ['amount' => $value->amount(), 'currency' => $value->currency()->name()];
-    } else if ($value instanceof Enum) {
-      return $value->name();
-    } else if ($value instanceof Traversable) {
-      return $this->generator($value);
-    } else if ($value instanceof XPIterator) {
-      return $this->iterator($value);
-    } else if (is_object($value)) {
+    if (is_object($value)) {
       foreach ($this->mappings as $type => $marshal) {
         if ($value instanceof $type) return $marshal[0]($value);
+      }
+
+      if ($value instanceof Enum) {
+        return $value->name();
+      } else if ($value instanceof Traversable) {
+        return $this->generator($value);
       }
 
       if (method_exists($value, '__serialize')) return $value->__serialize();
