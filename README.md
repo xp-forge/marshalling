@@ -63,7 +63,7 @@ $m= new Marshalling();
 $m->marshal(Date::now());                   // "2018-08-29T10:40:49+0200" (ISO 8601)
 $m->marshal(new Bytes("\x50\x4b\x03\x04")); // "UEsDBA==" (base64)
 $m->marshal(new Money(12.99, $currency));   // ["amount" => 12.99, "currency" => "EUR"]
-$m->marshal(UUID::randomUUID());            // "a2b15f7b-f6e0-45fa-9d7f-703fda05d4ac"
+$m->marshal(UUID::randomUUID());            // "{a2b15f7b-f6e0-45fa-9d7f-703fda05d4ac}"
 ```
 
 Custom logic
