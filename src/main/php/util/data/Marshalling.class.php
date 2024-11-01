@@ -1,6 +1,6 @@
 <?php namespace util\data;
 
-use Traversable;
+use UnitEnum, Traversable;
 use lang\{ArrayType, Enum, MapType, Reflection, Type, XPClass};
 use util\{Bytes, Currency, Date, Money, XPIterator};
 
@@ -184,6 +184,8 @@ class Marshalling {
 
       if ($value instanceof Enum) {
         return $value->name();
+      } else if ($value instanceof UnitEnum) {
+        return $value->name;
       } else if ($value instanceof Traversable) {
         return $this->generator($value);
       }
