@@ -8,7 +8,7 @@ Marshalling change log
 * Merged PR #8: Refactor mapping for classes inside `util`, making
   them overrideable
   (@thekid)
-* Merged PR #7: Add `mapping()` and `resolving()`` to supply custom
+* Merged PR #7: Add `mapping()` and `resolving()` to supply custom
   (un)-marshalling logic
   (@thekid)
 
