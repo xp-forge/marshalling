@@ -36,7 +36,7 @@ class MarshallingTest {
   public function mapping() {
     $marshalling= (new Marshalling())->mapping(
       Person::class,
-      fn($person) => ['id' => $person->id()]
+      function($person) { return ['id' => $person->id()]; }
     );
 
     Assert::equals(['id' => 6100], $marshalling->marshal(new Person(6100, 'Test')));
@@ -46,7 +46,7 @@ class MarshallingTest {
   public function resolving() {
     $marshalling= (new Marshalling())->resolving(
       Person::class,
-      fn($value) => new Person($value['id'], 'Test')
+      function($value) { return new Person($value['id'], 'Test'); }
     );
 
     Assert::equals(new Person(6100, 'Test'), $marshalling->unmarshal(['id' => 6100], Person::class));
