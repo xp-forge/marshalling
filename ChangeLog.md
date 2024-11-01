@@ -3,6 +3,13 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #8: Refactor mapping for classes inside `util`, making
+  them overrideable
+  (@thekid)
+* Merged PR #7: Add `mapping()` and `resolving()`` to supply custom
+  (un)-marshalling logic
+  (@thekid)
+
 ## 2.2.0 / 2024-03-24
 
 * Made compatible with XP 12 - @thekid
