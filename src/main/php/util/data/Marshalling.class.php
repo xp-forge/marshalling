@@ -16,6 +16,31 @@ use util\{Bytes, Currency, Date, Money, XPIterator};
  * @test  util.data.unittest.ObjectsTest
  */
 class Marshalling {
+  private $mappings= [];
+
+  /**
+   * Maps user type marshalling
+   *
+   * @param  string|lang.XPClass $type
+   * @param  function(var): var $marshal
+   * @return self
+   */
+  public function mapping($type, $marshal) {
+    $this->mappings[$type instanceof XPClass ? $type->literal() : $type][0]= $marshal;
+    return $this;
+  }
+
+  /**
+   * Resolves user type unmarshalling
+   *
+   * @param  string|lang.XPClass $type
+   * @param  function(var, lang.XPClass): var $unmarshal
+   * @return self
+   */
+  public function resolving($type, $unmarshal) {
+    $this->mappings[$type instanceof XPClass ? $type->literal() : $type][1]= $unmarshal;
+    return $this;
+  }
 
   /**
    * Applies unmarshal() to values inside an iterable
@@ -44,6 +69,10 @@ class Marshalling {
 
     $t= $type instanceof Type ? $type : Type::forName($type);
     if ($t instanceof XPClass) {
+      foreach ($this->mappings as $type => $mapping) {
+        if ($t->isAssignableFrom($type)) return $mapping[1]($value, $t);
+      }
+
       if ($t->isInstance($value)) {
         return $value;
       } else if ($t->isEnum()) {
@@ -149,6 +178,10 @@ class Marshalling {
     } else if ($value instanceof XPIterator) {
       return $this->iterator($value);
     } else if (is_object($value)) {
+      foreach ($this->mappings as $type => $marshal) {
+        if ($value instanceof $type) return $marshal[0]($value);
+      }
+
       if (method_exists($value, '__serialize')) return $value->__serialize();
       if (method_exists($value, '__toString')) return $value->__toString();
 
