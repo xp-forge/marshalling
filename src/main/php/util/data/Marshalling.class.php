@@ -2,7 +2,7 @@
 
 use UnitEnum, Traversable;
 use lang\{ArrayType, Enum, MapType, Reflection, Type, XPClass};
-use util\{Bytes, Currency, Date, Money, XPIterator};
+use util\{Bytes, Currency, Date, Money, UUID, XPIterator};
 
 /**
  * Takes care of converting objects from and to maps
@@ -13,6 +13,7 @@ use util\{Bytes, Currency, Date, Money, XPIterator};
  * @test  util.data.unittest.DatesTest
  * @test  util.data.unittest.EnumsTest
  * @test  util.data.unittest.MoneyTest
+ * @test  util.data.unittest.UUIDsTest
  * @test  util.data.unittest.ObjectsTest
  */
 class Marshalling {
@@ -27,6 +28,10 @@ class Marshalling {
     $this->mappings[Bytes::class]= [
       function($value) { return base64_encode($value); },
       function($value) { return new Bytes(base64_decode($value)); },
+    ];
+    $this->mappings[UUID::class]= [
+      function($value) { return $value->toString(); },
+      function($value) { return new UUID($value); },
     ];
     $this->mappings[Money::class]= [
       function($value) { return ['amount' => $value->amount(), 'currency' => $value->currency()->name()]; },
