@@ -3,6 +3,8 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 2.3.0 / 2024-11-01
+
 * Added support for PHP 8.1's https://wiki.php.net/rfc/enumerations
   (@thekid)
 * Merged PR #8: Refactor mapping for classes inside `util`, making
