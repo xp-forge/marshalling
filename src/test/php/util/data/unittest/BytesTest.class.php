@@ -1,7 +1,6 @@
 <?php namespace util\data\unittest;
 
-use test\Assert;
-use test\{Test, TestCase};
+use test\{Assert, Test};
 use util\Bytes;
 use util\data\Marshalling;
 

@@ -1,7 +1,6 @@
 <?php namespace util\data\unittest;
 
-use test\Assert;
-use test\{Test, TestCase, Values};
+use test\{Assert, Test, Values};
 use util\data\Marshalling;
 
 class PrimitivesTest {
