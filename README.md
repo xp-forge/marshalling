@@ -66,7 +66,29 @@ $m->marshal(new Money(12.99, $currency));   // ["amount" => 12.99, "currency" =>
 $m->marshal(UUID::randomUUID());            // ["value" => "a2b15f7b-f6e0-45fa-9d7f-703fda05d4ac"]
 ```
 
-See also:
+Custom logic
+------------
+To supply a function for marshalling and unmarshalling, use *mapping()* and *resolving()*:
 
+```php
+use util\data\Marshalling;
+
+class User {
+  public function __construct(public int $id, public string $name) { }
+}
+
+$marshalling= (new Marshalling())
+  ->mapping(User::class, fn($user) => $user->id)
+  ->resolving(User::class, fn($value) => new User($value, posix_getpwuid($value)['name'])
+;
+$value= $marshalling->marshal(new User(0, 'root'));
+// 0
+
+$user= $marshalling->unmarshal($value, User::class);
+// User(id: 0, name: 'root')
+```
+
+See also
+--------
 * https://stackoverflow.com/questions/1443158/binary-data-in-json-string-something-better-than-base64
 * https://stackoverflow.com/questions/30249406/what-is-the-standard-for-formatting-currency-values-in-json
