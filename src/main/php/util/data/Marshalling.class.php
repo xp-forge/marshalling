@@ -114,7 +114,7 @@ class Marshalling {
 
       foreach ($reflect->properties() as $name => $p) {
         $modifiers= $p->modifiers();
-        if ($modifiers->isStatic() || !isset($value[$name])) {
+        if ($modifiers->isStatic() || !array_key_exists($name, $value)) {
           continue;
         } else if ($m= $reflect->method('set'.ucfirst($name))) {
           $m->invoke($r, [$this->unmarshal($value[$name], $m->parameter(0)->constraint()->type())]);

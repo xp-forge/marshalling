@@ -4,7 +4,7 @@ class Person {
   private static $ROOT = 0;
 
   /** @var int */
-  private $id;
+  private $id= 0;
 
   /** @var string */
   public $name;

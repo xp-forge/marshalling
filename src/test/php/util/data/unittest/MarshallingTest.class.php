@@ -33,6 +33,11 @@ class MarshallingTest {
   }
 
   #[Test]
+  public function explicit_null() {
+    Assert::equals(null, (new Marshalling())->unmarshal(['id' => null], Person::class)->id());
+  }
+
+  #[Test]
   public function nullable() {
     Assert::equals(null, (new Marshalling())->unmarshal(null, '?util.data.unittest.fixtures.Date'));
   }
