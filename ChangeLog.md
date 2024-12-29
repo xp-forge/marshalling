@@ -3,6 +3,10 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 2.4.0 / 2024-12-29
+
+* Merged PR #10: Support unmarshalling to nullable types - @thekid
+
 ## 2.3.0 / 2024-11-01
 
 * Added support for PHP 8.1's https://wiki.php.net/rfc/enumerations
