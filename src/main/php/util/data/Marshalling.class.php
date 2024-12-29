@@ -1,7 +1,7 @@
 <?php namespace util\data;
 
 use UnitEnum, Traversable;
-use lang\{ArrayType, Enum, MapType, Reflection, Type, XPClass};
+use lang\{ArrayType, Enum, Nullable, MapType, Reflection, Type, XPClass};
 use util\{Bytes, Currency, Date, Money, XPIterator};
 
 /**
@@ -139,6 +139,8 @@ class Marshalling {
       return $r;
     } else if ($t === Type::$ITERABLE) {
       return $this->iterable($value, Type::$VAR);
+    } else if ($t instanceof Nullable) {
+      return null === $value ? null : $this->unmarshal($value, $t->underlyingType());
     } else {
       return $t->cast($value);
     }

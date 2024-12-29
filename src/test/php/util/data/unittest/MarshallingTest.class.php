@@ -3,7 +3,7 @@
 use lang\Type;
 use test\{Assert, Test, Values};
 use util\data\Marshalling;
-use util\data\unittest\fixtures\Person;
+use util\data\unittest\fixtures\{Date, Person};
 
 class MarshallingTest {
 
@@ -30,6 +30,16 @@ class MarshallingTest {
   #[Test]
   public function unmarshal_without_type() {
     Assert::equals(1, (new Marshalling())->unmarshal(1));
+  }
+
+  #[Test]
+  public function nullable() {
+    Assert::equals(null, (new Marshalling())->unmarshal(null, '?util.data.unittest.fixtures.Date'));
+  }
+
+  #[Test, Values([1609619853, '2021-01-02T21:37:33+01:00'])]
+  public function nullable_instance($input) {
+    Assert::equals(new Date($input), (new Marshalling())->unmarshal($input, '?util.data.unittest.fixtures.Date'));
   }
 
   #[Test]
