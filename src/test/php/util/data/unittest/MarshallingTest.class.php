@@ -38,12 +38,12 @@ class MarshallingTest {
   }
 
   #[Test]
-  public function nullable() {
-    Assert::equals(null, (new Marshalling())->unmarshal(null, '?util.data.unittest.fixtures.Date'));
+  public function null_as_nullable() {
+    Assert::null((new Marshalling())->unmarshal(null, '?util.data.unittest.fixtures.Date'));
   }
 
   #[Test, Values([1609619853, '2021-01-02T21:37:33+01:00'])]
-  public function nullable_instance($input) {
+  public function instance_as_nullable($input) {
     Assert::equals(new Date($input), (new Marshalling())->unmarshal($input, '?util.data.unittest.fixtures.Date'));
   }
 
