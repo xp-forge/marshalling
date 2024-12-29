@@ -122,4 +122,20 @@ class ObjectsTest {
       (new Marshalling())->unmarshal(['token' => '098f6bcd4', 'type' => 'Bearer'], Authorization::class)
     );
   }
+
+  #[Test]
+  public function uses_default_for_omitted_property() {
+    Assert::equals(
+      new Person(0, 'Test'),
+      (new Marshalling())->unmarshal(['name' => 'Test'], Person::class)
+    );
+  }
+
+  #[Test]
+  public function ignores_excess_property() {
+    Assert::equals(
+      new Person(6100, 'Test'),
+      (new Marshalling())->unmarshal(['id' => 6100, 'name' => 'Test', 'extra' => 'Test'], Person::class)
+    );
+  }
 }

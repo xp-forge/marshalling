@@ -1,7 +1,7 @@
 <?php namespace util\data;
 
 use UnitEnum, Traversable;
-use lang\{ArrayType, Enum, MapType, Reflection, Type, XPClass};
+use lang\{ArrayType, Enum, Nullable, MapType, Reflection, Type, XPClass};
 use util\{Bytes, Currency, Date, Money, XPIterator};
 
 /**
@@ -114,7 +114,7 @@ class Marshalling {
 
       foreach ($reflect->properties() as $name => $p) {
         $modifiers= $p->modifiers();
-        if ($modifiers->isStatic() || !isset($value[$name])) {
+        if ($modifiers->isStatic() || !array_key_exists($name, $value)) {
           continue;
         } else if ($m= $reflect->method('set'.ucfirst($name))) {
           $m->invoke($r, [$this->unmarshal($value[$name], $m->parameter(0)->constraint()->type())]);
@@ -139,6 +139,8 @@ class Marshalling {
       return $r;
     } else if ($t === Type::$ITERABLE) {
       return $this->iterable($value, Type::$VAR);
+    } else if ($t instanceof Nullable) {
+      return null === $value ? null : $this->unmarshal($value, $t->underlyingType());
     } else {
       return $t->cast($value);
     }
