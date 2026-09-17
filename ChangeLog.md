@@ -3,6 +3,11 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 2.5.0 / 2026-09-17
+
+* Refactored to use reflection library's type kinds - @thekid
+* Added PHP 8.5 and PHP 8.6 to test matrix - @thekid
+
 ## 2.4.0 / 2024-12-29
 
 * Merged PR #10: Support unmarshalling to nullable types - @thekid

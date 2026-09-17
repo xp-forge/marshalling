@@ -1,7 +1,8 @@
 <?php namespace util\data;
 
 use UnitEnum, Traversable;
-use lang\{ArrayType, Enum, Nullable, MapType, Reflection, Type, XPClass};
+use lang\reflection\Kind;
+use lang\{ArrayType, Enum, Nullable, MapType, Reflection, Type, XPClass, IllegalStateException};
 use util\{Bytes, Currency, Date, Money, XPIterator};
 
 /**
@@ -93,36 +94,40 @@ class Marshalling {
         if ($t->isAssignableFrom($type)) return $mapping[1]($value, $t);
       }
 
-      if ($t->isInstance($value)) {
-        return $value;
-      } else if ($t->isEnum()) {
-        return Enum::valueOf($t, $value);
-      } else if ($t->isInterface()) {
-        return $t->cast($value);
-      }
+      if ($t->isInstance($value)) return $value;
 
       $reflect= Reflection::type($t);
-      if (($c= $reflect->constructor()) && $c->parameters()->accept([$value], 1)) {
-        return $c->newInstance([$value]);
-      }
+      switch ($reflect->kind()) {
+        case Kind::$ENUM: return Enum::valueOf($t, $value);
+        case Kind::$INTERFACE: return $t->cast($value);
+        case Kind::$CLASS: {
 
-      $r= $reflect->initializer(null)->newInstance();
-      if (method_exists($r, '__unserialize')) {
-        $r->__unserialize($value);
-        return $r;
-      }
+          // Check for a single-argument constructor
+          if (($c= $reflect->constructor()) && $c->parameters()->accept([$value], 1)) {
+            return $c->newInstance([$value]);
+          }
 
-      foreach ($reflect->properties() as $name => $p) {
-        $modifiers= $p->modifiers();
-        if ($modifiers->isStatic() || !array_key_exists($name, $value)) {
-          continue;
-        } else if ($m= $reflect->method('set'.ucfirst($name))) {
-          $m->invoke($r, [$this->unmarshal($value[$name], $m->parameter(0)->constraint()->type())]);
-        } else {
-          $p->set($r, $this->unmarshal($value[$name], $p->constraint()->type()), $reflect);
+          // Instantiate without invoking the constructor
+          $r= $reflect->initializer(null)->newInstance();
+          if (method_exists($r, '__unserialize')) {
+            $r->__unserialize($value);
+            return $r;
+          }
+
+          foreach ($reflect->properties() as $name => $p) {
+            $modifiers= $p->modifiers();
+            if ($modifiers->isStatic() || !array_key_exists($name, $value)) {
+              continue;
+            } else if ($m= $reflect->method('set'.ucfirst($name))) {
+              $m->invoke($r, [$this->unmarshal($value[$name], $m->parameter(0)->constraint()->type())]);
+            } else {
+              $p->set($r, $this->unmarshal($value[$name], $p->constraint()->type()), $reflect);
+            }
+          }
+          return $r;
         }
+        default: throw new IllegalStateException('Cannot instantiate '.$reflect->kind()->name().' types');
       }
-      return $r;
     } else if ($t instanceof ArrayType || $t instanceof MapType) {
       $t= $t->componentType();
       $r= [];
