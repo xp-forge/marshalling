@@ -3,7 +3,8 @@
 use lang\Type;
 use test\{Assert, Test, Values};
 use util\data\Marshalling;
-use util\data\unittest\fixtures\{Date, Person};
+use util\data\unittest\fixtures\{Date, Person, Employee};
+use util\{Money, Currency};
 
 class MarshallingTest {
 
@@ -49,12 +50,15 @@ class MarshallingTest {
 
   #[Test]
   public function mapping() {
-    $marshalling= (new Marshalling())->mapping(
-      Person::class,
-      function($person) { return ['id' => $person->id()]; }
-    );
+    $marshalling= (new Marshalling())
+      ->mapping(Person::class, function($p) { return ['id' => $p->id()]; })
+      ->mapping(Employee::class, function($e) { return ['person' => $e->person, 'salary' => $e->salary]; })
+    ;
 
-    Assert::equals(['id' => 6100], $marshalling->marshal(new Person(6100, 'Test')));
+    Assert::equals(
+      ['person' => ['id' => 153], 'salary' => ['amount' => '6100', 'currency' => 'EUR']],
+      $marshalling->marshal(new Employee(new Person(153, 'Test'), new Money(6100, Currency::$EUR)))
+    );
   }
 
   #[Test]
