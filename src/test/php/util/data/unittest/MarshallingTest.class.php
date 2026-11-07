@@ -52,22 +52,30 @@ class MarshallingTest {
   public function mapping() {
     $marshalling= (new Marshalling())
       ->mapping(Person::class, function($p) { return ['id' => $p->id()]; })
-      ->mapping(Employee::class, function($e) { return ['person' => $e->person, 'salary' => $e->salary]; })
+      ->mapping(Employee::class, function($e) { return ['ref' => $e->person, 'pay' => $e->salary]; });
     ;
 
     Assert::equals(
-      ['person' => ['id' => 153], 'salary' => ['amount' => '6100', 'currency' => 'EUR']],
+      ['ref' => ['id' => 153], 'pay' => ['amount' => '6100', 'currency' => 'EUR']],
       $marshalling->marshal(new Employee(new Person(153, 'Test'), new Money(6100, Currency::$EUR)))
     );
   }
 
   #[Test]
   public function resolving() {
-    $marshalling= (new Marshalling())->resolving(
-      Person::class,
-      function($value) { return new Person($value['id'], 'Test'); }
-    );
+    $marshalling= (new Marshalling())
+      ->resolving(Person::class, function($value) { return new Person($value['id'], 'Test'); })
+      ->resolving(Employee::class, function($value) use(&$marshalling) {
+        return new Employee(
+          $marshalling->unmarshal($value['ref'], Person::class),
+          $marshalling->unmarshal($value['pay'], Money::class)
+        );
+      })
+    ;
 
-    Assert::equals(new Person(6100, 'Test'), $marshalling->unmarshal(['id' => 6100], Person::class));
+    Assert::equals(
+      new Employee(new Person(153, 'Test'), new Money(6100, Currency::$EUR)),
+      $marshalling->unmarshal(['ref' => ['id' => 153], 'pay' => ['amount' => '6100', 'currency' => 'EUR']], Employee::class)
+    );
   }
 }
