@@ -3,7 +3,8 @@
 use lang\Type;
 use test\{Assert, Test, Values};
 use util\data\Marshalling;
-use util\data\unittest\fixtures\{Date, Person};
+use util\data\unittest\fixtures\{Date, Person, Employee};
+use util\{Money, Currency};
 
 class MarshallingTest {
 
@@ -49,21 +50,32 @@ class MarshallingTest {
 
   #[Test]
   public function mapping() {
-    $marshalling= (new Marshalling())->mapping(
-      Person::class,
-      function($person) { return ['id' => $person->id()]; }
-    );
+    $marshalling= (new Marshalling())
+      ->mapping(Person::class, function($p) { return ['id' => $p->id()]; })
+      ->mapping(Employee::class, function($e) { return ['ref' => $e->person, 'pay' => $e->salary]; });
+    ;
 
-    Assert::equals(['id' => 6100], $marshalling->marshal(new Person(6100, 'Test')));
+    Assert::equals(
+      ['ref' => ['id' => 153], 'pay' => ['amount' => '6100', 'currency' => 'EUR']],
+      $marshalling->marshal(new Employee(new Person(153, 'Test'), new Money(6100, Currency::$EUR)))
+    );
   }
 
   #[Test]
   public function resolving() {
-    $marshalling= (new Marshalling())->resolving(
-      Person::class,
-      function($value) { return new Person($value['id'], 'Test'); }
-    );
+    $marshalling= (new Marshalling())
+      ->resolving(Person::class, function($value) { return new Person($value['id'], 'Test'); })
+      ->resolving(Employee::class, function($value) use(&$marshalling) {
+        return new Employee(
+          $marshalling->unmarshal($value['ref'], Person::class),
+          $marshalling->unmarshal($value['pay'], Money::class)
+        );
+      })
+    ;
 
-    Assert::equals(new Person(6100, 'Test'), $marshalling->unmarshal(['id' => 6100], Person::class));
+    Assert::equals(
+      new Employee(new Person(153, 'Test'), new Money(6100, Currency::$EUR)),
+      $marshalling->unmarshal(['ref' => ['id' => 153], 'pay' => ['amount' => '6100', 'currency' => 'EUR']], Employee::class)
+    );
   }
 }

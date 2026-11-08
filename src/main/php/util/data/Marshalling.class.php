@@ -186,7 +186,7 @@ class Marshalling {
   public function marshal($value) {
     if (is_object($value)) {
       foreach ($this->mappings as $type => $marshal) {
-        if ($value instanceof $type) return $marshal[0]($value);
+        if ($value instanceof $type) return $this->marshal($marshal[0]($value));
       }
 
       if ($value instanceof Enum) {
