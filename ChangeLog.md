@@ -3,6 +3,10 @@ Marshalling change log
 
 ## ?.?.? / ????-??-??
 
+## 2.6.0 / 2026-11-08
+
+* Merged PR #11: Marshal values returned by mappings - @thekid
+
 ## 2.5.0 / 2026-09-17
 
 * Refactored to use reflection library's type kinds - @thekid
